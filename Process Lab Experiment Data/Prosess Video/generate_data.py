@@ -174,7 +174,7 @@ def convolve_disk(image_in, kernel_radius=10, verbose=0):
     return convolved
 
 
-def find_pos_seed(shape_image, list_images, dict_images, image_number, identification='lowest', verbose=0, debug=False):
+def find_pos_slider(shape_image, list_images, dict_images, image_number, identification='lowest', verbose=0, debug=False):
     difference_image = compute_change_image(list_images, dict_images, image_number, plot_L2=False, verbose=verbose)
 
     threshold_change = 40
@@ -193,7 +193,7 @@ def find_pos_seed(shape_image, list_images, dict_images, image_number, identific
     convolved = convolve_disk(thresholded_image, kernel_radius=11, verbose=verbose)
     convolved = np.uint8(255.0 * convolved / np.max(np.max(convolved)))
 
-    # version to identify the lowest point of the seed
+    # version to identify the lowest point of the sliders light emitting diode
     if identification == 'lowest':
         index_valid = np.where(convolved > 250)
         if index_valid[0].size == 0:
@@ -207,7 +207,7 @@ def find_pos_seed(shape_image, list_images, dict_images, image_number, identific
             position_1 = 0
             position_2 = 0
             position = (position_1, position_2)
-    # version to identify the center of the seed
+    # version to identify the center of the sliders light emitting diode
     elif identification == 'highest':
         position = np.unravel_index(convolved.argmax(), convolved.shape)
     else:
@@ -237,11 +237,11 @@ def find_pos_seed(shape_image, list_images, dict_images, image_number, identific
     return(position)
 
 
-def plot_image_with_identified_points(list_images, dict_images, image_number, pos_seed, half_width_box=150, height_box=80):
+def plot_image_with_identified_points(list_images, dict_images, image_number, pos_slider, half_width_box=150, height_box=80):
 
     plt.figure()
     plt.imshow(dict_images[list_images[image_number]])
-    plt.plot(pos_seed[1], pos_seed[0], marker='o', color='r')
+    plt.plot(pos_slider[1], pos_slider[0], marker='o', color='r')
     plt.show()
 
 # Analysis of one folder and processing of raw results functions ----------------------
@@ -273,8 +273,8 @@ def process_folder_load(path_to_folder, verbose=0):
 
 def process_folder_process(path_to_folder, dict_images, list_images, number_of_images, tuple_shape_image, image_start=0, number_of_images_to_analyse=-1, verbose=0, debug=False):
 
-    print "Generate positions and width for each seed from images"
-    list_pos_seed = []
+    print "Generate positions and width for each sliderfrom images"
+    list_pos_slider = []
 
     if number_of_images_to_analyse > 0:
         max_range = number_of_images_to_analyse
@@ -285,13 +285,13 @@ def process_folder_process(path_to_folder, dict_images, list_images, number_of_i
         ind += image_start
 
         if verbose > 1:
-            print "Locate seed in image number: " + str(ind)
+            print "Locate slider in image number: " + str(ind)
 
-        position = find_pos_seed(tuple_shape_image, list_images, dict_images, ind, verbose=verbose - 2, debug=debug)
-        list_pos_seed.append(position)
+        position = find_pos_slider(tuple_shape_image, list_images, dict_images, ind, verbose=verbose - 2, debug=debug)
+        list_pos_slider.append(position)
 
         if verbose > 2:
-            plot_image_with_identified_points(list_images, dict_images, ind, list_pos_seed[-1])
+            plot_image_with_identified_points(list_images, dict_images, ind, list_pos_slider[-1])
 
             if number_of_images_to_analyse == -1:
                 continue_processing = raw_input("Continue? yes [y] or no [n]: ")
@@ -300,7 +300,7 @@ def process_folder_process(path_to_folder, dict_images, list_images, number_of_i
 
     print "Done!"
 
-    return list_pos_seed
+    return list_pos_slider
 
 # Calibration and fine analysis of raw results functions ---------------------------------
 
@@ -454,8 +454,8 @@ for ind_case in range(nbr_cases):
 
     (dict_images, list_images, number_of_images, tuple_shape_image) = process_folder_load(path_to_images, verbose=0)
 
-    list_pos_seed = process_folder_process(path_to_images, dict_images, list_images, number_of_images, tuple_shape_image, image_start=0, number_of_images_to_analyse=-1, verbose=0, debug=False)
+    list_pos_slider = process_folder_process(path_to_images, dict_images, list_images, number_of_images, tuple_shape_image, image_start=0, number_of_images_to_analyse=-1, verbose=0, debug=False)
 
     print "Saving generated data"
 
-    save_one_result(list_pos_seed, 'list_pos_seed')
+    save_one_result(list_pos_slider, 'list_pos_slider')

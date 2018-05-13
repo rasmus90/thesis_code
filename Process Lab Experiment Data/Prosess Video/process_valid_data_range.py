@@ -14,20 +14,20 @@ from folder_path import path_
 # all functions for range selection ----------------------------------------------------------------
 
 
-def plot_raw_results_folder_process(list_pos_seed, polynomial_calibration_horizontal=None, sampling_frequency=60.0, valid_index=(-1, -1), debug=False, f_max=5):
+def plot_raw_results_folder_process(list_pos_slider, polynomial_calibration_horizontal=None, sampling_frequency=60.0, valid_index=(-1, -1), debug=False, f_max=5):
 
     # generate data to use
-    pos_seed = np.asarray(list_pos_seed, dtype=np.float32)
+    pos_slider = np.asarray(list_pos_slider, dtype=np.float32)
 
-    coord = pos_seed
+    coord = pos_slider
     use_calibration = False
 
-    time_vector = np.arange(0, len(pos_seed), 1.0) / float(sampling_frequency) * 1000
+    time_vector = np.arange(0, len(pos_slider), 1.0) / float(sampling_frequency) * 1000
     ind = np.where(np.logical_and(time_vector >= valid_index[0],
                                   time_vector <= valid_index[1]))
 
     if valid_index[0] > -1:
-        pos_seed = pos_seed[ind[0], :]
+        pos_slider = pos_slider[ind[0], :]
 
     # extract selected time interval
 
@@ -48,20 +48,20 @@ def plot_raw_results_folder_process(list_pos_seed, polynomial_calibration_horizo
         use_calibration = True
 
         if debug:
-            print pos_seed
+            print pos_slider
 
-        pos_seed[:, 1] = p(pos_seed[:, 1])
+        pos_slider[:, 1] = p(pos_slider[:, 1])
         coord[:, 1] = p(coord[:, 1])
 
         if debug:
-            print pos_seed
+            print pos_slider
 
         trajectory = False
         if trajectory:
             # look at horizontal velocity by time evolution of height
             plt.figure()
-            # plt.plot(pos_seed[:,1])
-            plt.plot(time_vector, pos_seed[:, 1])
+            # plt.plot(pos_slider[:,1])
+            plt.plot(time_vector, pos_slider[:, 1])
             plt.xlabel('Time (s)')
             plt.ylabel('Position (m, calibrated)')
             plt.show()
@@ -71,7 +71,7 @@ def plot_raw_results_folder_process(list_pos_seed, polynomial_calibration_horizo
 
 
         # look at the horizontal velocity by differenciation
-        horizontal_velocity = (pos_seed[inc:, 1] - pos_seed[0:-inc, 1]) * sampling_frequency / inc
+        horizontal_velocity = (pos_slider[inc:, 1] - pos_slider[0:-inc, 1]) * sampling_frequency / inc
         horizontal_velocity_whole_range = (coord[inc:, 1] - coord[0:-inc, 1]) * sampling_frequency / inc
         sg = savitzky_golay(horizontal_velocity_whole_range[ind[0][4]:ind[0][-1]], 101, 5)
 
@@ -94,7 +94,7 @@ def plot_raw_results_folder_process(list_pos_seed, polynomial_calibration_horizo
         if path_.savepower:
             save_to_power_folder(time_vector[inc:], sg)
 
-        mean_horizontal_velocity = (pos_seed[-1, 1] - pos_seed[0, 1]) * sampling_frequency / pos_seed.shape[0]
+        mean_horizontal_velocity = (pos_slider[-1, 1] - pos_slider[0, 1]) * sampling_frequency / pos_slider.shape[0]
         print
         print " "
         print "Information slider horizontal velocity:"
@@ -104,20 +104,20 @@ def plot_raw_results_folder_process(list_pos_seed, polynomial_calibration_horizo
         print "Using no calibration"
         # figure identified points
         plt.figure()
-        plt.plot(pos_seed[:, 0], pos_seed[:, 1], marker='o', color='k')
+        plt.plot(pos_slider[:, 0], pos_slider[:, 1], marker='o', color='k')
         plt.xlabel("x (pxls)")
         plt.ylabel("y (pxls)")
         plt.show()
 
         # look at horizontal velocity by time evolution of height
         plt.figure()
-        # plt.plot(pos_seed[:,1])
-        plt.plot(time_vector, pos_seed[:, 1])
+        # plt.plot(pos_slider[:,1])
+        plt.plot(time_vector, pos_slider[:, 1])
         plt.xlabel('Time (s)')
         plt.ylabel('Position (pxls, not calibrated)')
 
         # look at the horizontal velocity by differenciation
-        horizontal_velocity = (pos_seed[1:, 1] - pos_seed[0:-1, 1]) * sampling_frequency
+        horizontal_velocity = (pos_slider[1:, 1] - pos_slider[0:-1, 1]) * sampling_frequency
 
         plt.figure()
         # plt.plot(horizontal_velocity)
@@ -125,7 +125,7 @@ def plot_raw_results_folder_process(list_pos_seed, polynomial_calibration_horizo
         plt.xlabel('Time (s)')
         plt.ylabel('Velocity (pxl / s, not calibrated)')
 
-    return (pos_seed, use_calibration, mean_horizontal_velocity)
+    return (pos_slider, use_calibration, mean_horizontal_velocity)
 
 
 def save_to_power_folder(time, velocity):
@@ -237,7 +237,7 @@ for ind_case in range(nbr_cases):
 
     print "Load generated data"
 
-    list_pos_seed = load_one_result('list_pos_seed')
+    list_pos_slider = load_one_result('list_pos_slider')
     indices = np.load(path + "indices.npy")
     print "Load valid range data"
     valid_range = np.genfromtxt(path_to_images + "valid_range.csv", delimiter=",")
@@ -245,11 +245,11 @@ for ind_case in range(nbr_cases):
     min_valid_range = int(valid_range[0])
     max_valid_range = int(valid_range[1])
 
-    (pos_seed, use_calibration, mean_horizontal_velocity) = plot_raw_results_folder_process(
-        list_pos_seed, polynomial_calibration_horizontal=poly_fit_calibration,
+    (pos_slider, use_calibration, mean_horizontal_velocity) = plot_raw_results_folder_process(
+        list_pos_slider, polynomial_calibration_horizontal=poly_fit_calibration,
         sampling_frequency=sampling_frequency, valid_index=(min_valid_range, max_valid_range), debug=False, f_max=5)
 
-    dict_all_results[list_cases[ind_case] + "pos_seed"] = pos_seed
+    dict_all_results[list_cases[ind_case] + "pos_slider"] = pos_slider
     dict_all_results[list_cases[ind_case] + "use_calibration"] = use_calibration
     dict_all_results[list_cases[ind_case] + "mean_horizontal_velocity"] = mean_horizontal_velocity
 

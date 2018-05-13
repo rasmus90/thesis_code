@@ -103,6 +103,6 @@ polynomial_calibration_horizontal = np.load(path + 'poly_fit_calibration.npy')
 samp_freq = 60
 
 if __name__ == "__main__":
-    list_position_slider = load_one_result('list_pos_seed')
+    list_position_slider = load_one_result('list_pos_slider')
     x, ind = get_valid_range(0.0, 2.5, list_position_slider)
     plot_results(x, ind, inc=5)

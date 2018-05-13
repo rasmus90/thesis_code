@@ -1,5 +1,4 @@
-path = "/media/rasmus/SAMSUNG/Velocity (Cam) Data/2018/Mars/2103_glass_pehd_soap/40_1/"
-#path = "/media/rasmus/SAMSUNG/Velocity (Cam) Data/1412PEHD 2/l630_3/"
+path = "/media/user/folder/"
 material = "PMMA"
 vel = str(60)
 load = str(535)

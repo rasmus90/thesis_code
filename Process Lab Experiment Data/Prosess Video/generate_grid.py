@@ -1,3 +1,7 @@
+"""
+Generate grid to relate pixels to real coordinates (x,y).
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import misc

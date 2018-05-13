@@ -35,8 +35,8 @@ class generateDataOnClick:
 
 
 def get_valid_range(min_x, max_x):
-    position_seed = np.asarray(list_pos_seed)
-    x = position_seed[:, 1]
+    position_slider = np.asarray(list_pos_slider)
+    x = position_slider[:, 1]
     ind = np.where(np.logical_and(x > min_x, x < max_x))
 
     np.save(path + "indices", ind)
@@ -45,12 +45,12 @@ def get_valid_range(min_x, max_x):
 
 
 def select_valid_range(verbose=0):
-    pos_seed = np.asarray(list_pos_seed)
-    x_coord = pos_seed[:, 1]
-    y_coord = pos_seed[:, 0]
+    pos_slider = np.asarray(list_pos_slider)
+    x_coord = pos_slider[:, 1]
+    y_coord = pos_slider[:, 0]
 
     # time in milliseconds
-    time = np.arange(0, len(pos_seed), 1.0) / float(sampling_frequency) * 1000
+    time = np.arange(0, len(pos_slider), 1.0) / float(sampling_frequency) * 1000
     plt.figure()
     plt.plot(time, x_coord, label='x position')
     plt.plot(time, y_coord, label='y position')
@@ -121,7 +121,7 @@ for ind_case in range(nbr_cases):
     print "Load generated data"
 
 
-    list_pos_seed = load_one_result('list_pos_seed')
+    list_pos_slider = load_one_result('list_pos_slider')
 
     print ""
     print "Select valid range"
